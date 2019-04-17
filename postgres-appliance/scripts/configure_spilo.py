@@ -167,22 +167,8 @@ bootstrap:
   {{#CLONE_WITH_WALE}}
   method: clone_with_wale
   clone_with_wale:
-    command: envdir "{{CLONE_WALE_ENV_DIR}}" python3 /scripts/clone_with_wale.py --recovery-target-time="{{CLONE_TARGET_TIME}}"
-    recovery_conf:
-        restore_command: envdir "{{CLONE_WALE_ENV_DIR}}" /scripts/restore_command.sh "%f" "%p"
-        recovery_target_timeline: latest
-        {{#USE_PAUSE_AT_RECOVERY_TARGET}}
-        pause_at_recovery_target: false
-        {{/USE_PAUSE_AT_RECOVERY_TARGET}}
-        {{^USE_PAUSE_AT_RECOVERY_TARGET}}
-        recovery_target_action: promote
-        {{/USE_PAUSE_AT_RECOVERY_TARGET}}
-        {{#CLONE_TARGET_TIME}}
-        recovery_target_time: "{{CLONE_TARGET_TIME}}"
-        {{/CLONE_TARGET_TIME}}
-        {{^CLONE_TARGET_INCLUSIVE}}
-        recovery_target_inclusive: false
-        {{/CLONE_TARGET_INCLUSIVE}}
+    command: envdir "{{CLONE_WALE_ENV_DIR}}" python3 /scripts/clone_with_wale.py --recovery-target-time="{{CLONE_TARGET_TIME}}" --recovery-target-timeline="{{CLONE_TARGET_TIMELINE}}" --wale-envdir="{{CLONE_WALE_ENV_DIR}}"
+    keep_existing_recovery_conf: true
   {{/CLONE_WITH_WALE}}
   {{#CLONE_WITH_BASEBACKUP}}
   method: clone_with_basebackup
@@ -418,6 +404,7 @@ def get_placeholders(provider):
     placeholders.setdefault('CLONE_WITH_WALE', '')
     placeholders.setdefault('CLONE_WITH_BASEBACKUP', '')
     placeholders.setdefault('CLONE_TARGET_TIME', '')
+    placeholders.setdefault('CLONE_TARGET_TIMELINE', '')
     placeholders.setdefault('CLONE_TARGET_INCLUSIVE', True)
 
     placeholders.setdefault('LOG_SHIP_SCHEDULE', '1 0 * * *')
